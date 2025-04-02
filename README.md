@@ -1,71 +1,50 @@
-
 # README
 
-## 项目简介
+## 实验概述
+本实验使用 PyTorch 实现前馈神经网络（Feedforward Neural Network, FNN），用于拟合目标函数：
+\[ y = \log_2(x) + \cos(\pi x / 2) \]
+并研究数据量、网络深度、学习率、网络宽度和激活函数等超参数对模型性能的影响。
 
-本项目使用 PyTorch 实现了一个前馈神经网络（FeedForward Neural Network, FFNN）来拟合目标函数：
-\(y = \log_2(x) + \cos(\pi x / 2)\)
+## 实验环境
+- **编程语言**: Python 3.x
+- **深度学习框架**: PyTorch
+- **其他依赖库**: numpy、matplotlib、scikit-learn
+- **硬件要求**: 仅使用 CPU 也可完成实验，但推荐使用 GPU 以提高训练速度
 
-## 代码结构
+## 实验步骤
 
-- **数据生成 (****`generate_data`****)**: 生成 2000 个样本数据，并划分为训练集、验证集和测试集。
-- **数据可视化**: 通过 `matplotlib` 绘制数据集分布。
-- **神经网络 (****`FeedForwardNN`****)**: 搭建包含多个隐藏层的前馈神经网络。
-- **训练 (****`train`****)**: 使用 MSE 损失函数和 Adam 优化器进行模型训练。
-- **验证 (****`validate`****)**: 在验证集上计算均方误差 (MSE) 并输出预测结果。
-- **测试 (****`evaluate`****)**: 在测试集上评估最终模型性能。
-
-## 依赖项
-
-请确保安装了以下 Python 库：
-
+### 1. 安装必要的库
 ```bash
-pip install torch numpy matplotlib scikit-learn
+pip install torch torchvision numpy matplotlib scikit-learn
 ```
 
-## 运**行方**式
+### 2. 数据生成
+- 在区间 \([1,16]\) 内均匀采样得到 \(N\) 个样本，其中 \(N = 200, 2000, 10000\) 三种情况。
+- 按照 **训练集：验证集：测试集 = 8:1:1** 的比例划分数据集。
+- 目标函数计算对应的 \( y \) 值。
 
-1. **运行数据生成和可视化**
+### 3. 模型搭建
+- 使用 PyTorch 封装的 `torch.nn.Linear()`、`torch.nn.ReLU()` 等组件构建前馈神经网络。
+- 网络结构由超参数决定，包括隐藏层大小（网络宽度）、层数（深度）和激活函数。
 
-   ```python
-   python main.py
-   ```
+### 4. 训练模型
+- 采用均方误差 (MSE) 作为损失函数。
+- 采用 Adam 优化器进行参数更新。
+- 在训练过程中进行 loss 监测，每 100 个 epoch 输出一次损失值。
 
-   生成数据并绘制数据分布图。
+### 5. 调参分析
+- 通过修改网络深度、学习率、网络宽度和激活函数等超参数，观察其对模型性能的影响。
+- 以 MSE 作为评价指标，在验证集上测试不同超参数组合的表现。
+- 使用 Matplotlib 绘制验证集的原始样本点与预测点，进行可视化分析。
 
-2. **训练模型**
+### 6. 模型测试
+- 选择在验证集上表现最好的超参数组合，重新训练模型。
+- 在测试集上进行 **唯一一次** 测试，记录最终 MSE 结果。
 
-   ```python
-   model = FeedForwardNN(input_dim=1, hidden_dim=64, output_dim=1, num_layers=3, activation=nn.ReLU)
-   train(model, x_train, y_train, epochs=100, lr=0.001)
-   ```
+## 结果可视化
+- 训练集、验证集、测试集的数据分布图。
+- 训练过程中 loss 下降曲线。
+- 训练完成后，验证集的真实值与模型预测值的对比可视化。
+- 不同超参数对模型性能的影响分析。
 
-   训练神经网络，并每 100 轮打印一次损失。
-
-3. **验证与测试模型**
-
-   ```python
-   mse_val, predictions_val = validate(model, x_val, y_val)
-   mse_test, predictions_test = evaluate(model, x_test, y_test)
-   ```
-
-   计算模型在验证集和测试集上的 MSE，并输出测试结果。
-
-## 结果示例
-
-```
-Epoch[100/100], Loss: 0.0156
-Validation MSE: 0.0123
-Test MSE: 0.0137
-```
-
-## 可能的问题与改进
-
-- 训练过程中可能会遇到梯度消失或梯度爆炸的问题，可以调整 `hidden_dim` 或 `num_layers`。
-- 选择不同的 `activation`（如 `nn.Tanh` 或 `nn.Sigmoid`）可能会影响模型表现。
-- 通过 `learning rate decay` 或 `dropout` 可以提升模型泛化能力。
-
-## 许可证
-
-本项目基于 MIT 许可证开源，可自由使用和修改。
 
